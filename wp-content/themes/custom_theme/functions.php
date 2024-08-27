@@ -83,3 +83,5 @@ function apply_my_customizations() {
 }
 add_action( 'wp_head', 'apply_my_customizations');
 ?>
+
+
