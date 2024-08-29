@@ -110,3 +110,39 @@ function mls_integration_initialize() {
 
 add_action('init', 'mls_integration_initialize');
 
+function get_mls_listings() {
+    $api_url = 'https://your-mls-api.com/v1/listings'; // Replace with your MLS API URL
+    $api_key = 'your-api-key'; // Replace with your API key
+
+    $response = wp_remote_get($api_url, array(
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $api_key,
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        return 'Failed to retrieve MLS listings.';
+    }
+
+    $listings = json_decode(wp_remote_retrieve_body($response), true);
+
+    if (empty($listings)) {
+        return 'No listings found.';
+    }
+
+    // Output the listings
+    $output = '<div class="mls-listings">';
+    foreach ($listings as $listing) {
+        $output .= '<div class="mls-listing">';
+        $output .= '<h2>' . esc_html($listing['address']) . '</h2>';
+        $output .= '<p>' . esc_html($listing['price']) . '</p>';
+        $output .= '<p>' . esc_html($listing['bedrooms']) . ' Bedrooms</p>';
+        $output .= '<p>' . esc_html($listing['bathrooms']) . ' Bathrooms</p>';
+        $output .= '</div>';
+    }
+    $output .= '</div>';
+
+    return $output;
+}
+
+add_shortcode('mls_listings', 'get_mls_listings');
